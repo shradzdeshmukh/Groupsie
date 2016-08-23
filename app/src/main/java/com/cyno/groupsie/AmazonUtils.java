@@ -43,13 +43,14 @@ public class AmazonUtils {
                 + " MD5 " + result.getContentMd5());
 */
 
-
+        File mFile = new File(imagePath);
+        Log.d("amazon" , mFile.getTotalSpace()+"");
         TransferUtility transferUtility = getTransferUtility(context);
-        TransferObserver obs = transferUtility.upload(Constants.AMAZON_S3_BUCKET, "test", new File(imagePath));
+        TransferObserver obs = transferUtility.upload(Constants.AMAZON_S3_BUCKET, "test",mFile );
         obs.setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
-
+                Log.d("amazon" , "state schanged= " );
             }
 
             @Override
@@ -59,7 +60,7 @@ public class AmazonUtils {
 
             @Override
             public void onError(int id, Exception ex) {
-
+                Log.d("amazon" , "error = " + ex.getLocalizedMessage());
             }
         });
     }
@@ -113,10 +114,11 @@ public class AmazonUtils {
      */
     private static CognitoCachingCredentialsProvider getCredProvider(Context context) {
         if (sCredProvider == null) {
-            sCredProvider = new CognitoCachingCredentialsProvider(
-                    context.getApplicationContext(),
-                    "us-west-2_obVRfGcEy",
-                    Regions.AP_SOUTH_1);
+            sCredProvider =  new CognitoCachingCredentialsProvider(
+                    context,
+                    "us-west-2:cacee17e-fd44-429d-ab75-2234beb8c0a2", // Identity Pool ID
+                    Regions.US_WEST_2 // Region
+            );
         }
         return sCredProvider;
     }
