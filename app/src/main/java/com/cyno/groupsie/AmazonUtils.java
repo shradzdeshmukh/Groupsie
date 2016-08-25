@@ -115,7 +115,7 @@ public class AmazonUtils {
     private static CognitoCachingCredentialsProvider getCredProvider(Context context) {
         if (sCredProvider == null) {
             sCredProvider =  new CognitoCachingCredentialsProvider(
-                    context,
+                    context.getApplicationContext(),
                     "us-west-2:cacee17e-fd44-429d-ab75-2234beb8c0a2", // Identity Pool ID
                     Regions.US_WEST_2 // Region
             );
