@@ -1,7 +1,9 @@
-package com.cyno.groupsie;
+package com.cyno.groupsie.Activities;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
+
+import com.cyno.groupsie.R;
 
 public class MainActivity extends AppCompatActivity {
 

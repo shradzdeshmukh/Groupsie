@@ -3,4 +3,13 @@
     <string name="sign_out">Sign out</string>
     <string name="loading">Loading</string>
     <string name="fb_id">897182863642113</string>
+    <string name="authority">com.cyno.groupsie</string>
+
+    <string name="title_activity_splah_screen">SplahScreenActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="upgrade_title">Upgrade Needed</string>
+    <string name="upgrade_msg">Please upgrade your app to enjoy new features</string>
+    <string name="upgrade">Upgrade</string>
+    <string name="cancel">Cancel</string>
 </resources>

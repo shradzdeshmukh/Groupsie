@@ -1,10 +1,9 @@
-package com.cyno.groupsie;
+package com.cyno.groupsie.ConstatnsAndUtils;
 
 import android.content.Context;
 import android.util.Log;
 
 import com.amazonaws.ClientConfiguration;
-import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.auth.CognitoCachingCredentialsProvider;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferListener;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferObserver;
@@ -12,9 +11,6 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
-import com.amazonaws.services.s3.model.CannedAccessControlList;
-import com.amazonaws.services.s3.model.PutObjectRequest;
-import com.amazonaws.services.s3.model.PutObjectResult;
 
 import java.io.File;
 
@@ -28,25 +24,12 @@ public class AmazonUtils {
     private static AmazonS3Client sS3Client;
     private static CognitoCachingCredentialsProvider sCredProvider;
 
-    public static final void uploadImage(Context context ,String amazonDir, String imagePath){
+    public static final void uploadImage(Context context, String amazonDir, String localImagePath) {
 
-/*
-        AmazonS3Client s3Client = new AmazonS3Client(
-                new BasicAWSCredentials(Constants.AMAZON_ACCESS_KEY, Constants.AMAZON_SECRET), getConnectionConfig());
-        PutObjectRequest por = new PutObjectRequest(Constants.AMAZON_S3_BUCKET,
-                amazonDir, new java.io.File(imagePath));
-
-        por.setCannedAcl(CannedAccessControlList.PublicRead);
-
-        PutObjectResult result = s3Client.putObject(por);
-        Log.e("amazon", "result = " + result.getETag()
-                + " MD5 " + result.getContentMd5());
-*/
-
-        File mFile = new File(imagePath);
+        File mFile = new File(localImagePath);
         Log.d("amazon" , mFile.getTotalSpace()+"");
         TransferUtility transferUtility = getTransferUtility(context);
-        TransferObserver obs = transferUtility.upload(Constants.AMAZON_S3_BUCKET, "test",mFile );
+        TransferObserver obs = transferUtility.upload(Constants.AMAZON_S3_BUCKET, amazonDir, mFile);
         obs.setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
@@ -100,7 +83,7 @@ public class AmazonUtils {
      */
     public static AmazonS3Client getS3Client(Context context) {
         if (sS3Client == null) {
-            sS3Client = new AmazonS3Client(getCredProvider(context.getApplicationContext()));
+            sS3Client = new AmazonS3Client(getCredProvider(context.getApplicationContext()), getConnectionConfig());
         }
         return sS3Client;
     }
@@ -122,5 +105,6 @@ public class AmazonUtils {
         }
         return sCredProvider;
     }
+
 
 }
