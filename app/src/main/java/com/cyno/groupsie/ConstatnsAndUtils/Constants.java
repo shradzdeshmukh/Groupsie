@@ -1,4 +1,4 @@
-package com.cyno.groupsie.ConstatnsAndUtils;
+package com.cyno.groupsie.constatnsAndUtils;
 
 /**
  * Created by user on 17/8/16.
@@ -11,4 +11,6 @@ public class Constants {
     public static final int SOCKET_TIME_OUT = 30000;
     public static final String KEY_APP_VERSION = "AppVersion";
     public static final long CACHE_EXPIRATION = 10;
+    public static final String KEY_IS_LOGGED_IN = "is_logged";
+    public static final String USER_DP_URL = "dp_url";
 }

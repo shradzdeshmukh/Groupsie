@@ -12,4 +12,6 @@
     <string name="upgrade_msg">Please upgrade your app to enjoy new features</string>
     <string name="upgrade">Upgrade</string>
     <string name="cancel">Cancel</string>
+    <string name="title_activity_album_list">AlbumListActivity</string>
+    <string name="logout">Logout</string>
 </resources>

@@ -1,4 +1,4 @@
-package com.cyno.groupsie.Models;
+package com.cyno.groupsie.models;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;

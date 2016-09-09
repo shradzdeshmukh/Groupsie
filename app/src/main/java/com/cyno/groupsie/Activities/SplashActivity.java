@@ -1,4 +1,4 @@
-package com.cyno.groupsie.Activities;
+package com.cyno.groupsie.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -7,9 +7,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 
 import com.cyno.groupsie.BuildConfig;
-import com.cyno.groupsie.ConstatnsAndUtils.AppUtils;
-import com.cyno.groupsie.ConstatnsAndUtils.Constants;
 import com.cyno.groupsie.R;
+import com.cyno.groupsie.constatnsAndUtils.AppUtils;
+import com.cyno.groupsie.constatnsAndUtils.Constants;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.remoteconfig.FirebaseRemoteConfig;
@@ -39,7 +39,7 @@ public class SplashActivity extends AppCompatActivity {
                     AppUtils.putVersionNumber((int) mFirebaseRemoteConfig.getLong(Constants.KEY_APP_VERSION), SplashActivity.this);
                     mFirebaseRemoteConfig.activateFetched();
                     if (AppUtils.isVersionAllowed(SplashActivity.this)) {
-                        startActivity(new Intent(SplashActivity.this, FacebookLoginActivity.class));
+                        startActivity(new Intent(SplashActivity.this, LoginActivity.class));
                         finish();
                     } else
                         AppUtils.ShowUpgradeDialog(SplashActivity.this);

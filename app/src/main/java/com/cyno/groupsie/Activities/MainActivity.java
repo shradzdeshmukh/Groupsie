@@ -1,4 +1,4 @@
-package com.cyno.groupsie.Activities;
+package com.cyno.groupsie.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;

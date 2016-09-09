@@ -1,4 +1,4 @@
-package com.cyno.groupsie.ConstatnsAndUtils;
+package com.cyno.groupsie.constatnsAndUtils;
 
 import android.content.Context;
 import android.util.Log;
