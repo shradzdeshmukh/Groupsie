@@ -14,4 +14,7 @@
     <string name="cancel">Cancel</string>
     <string name="title_activity_album_list">AlbumListActivity</string>
     <string name="logout">Logout</string>
+    <string name="create_album_title">Create new album</string>
+    <string name="done">Done</string>
+    <string name="enter_album_title">Enter album title</string>
 </resources>

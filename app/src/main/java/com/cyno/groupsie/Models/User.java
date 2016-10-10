@@ -1,5 +1,9 @@
 package com.cyno.groupsie.models;
 
+import android.content.Context;
+
+import com.cyno.groupsie.constatnsAndUtils.AppUtils;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.IgnoreExtraProperties;
@@ -11,23 +15,71 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class User {
 
-    public String username;
-    public String email;
-    public String profilePicUrl;
-    DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+    private static final String F_TABLE_NAME = "Users";
+    private static final String C_NAME = "name";
+    private static final String C_EMAIL = "email";
+    private static final String C_DP_URL = "pic";
+
+    private String username;
+    private String userId;
+    private String email;
+    private String profilePicUrl;
 
     public User() {
         // Default constructor required for calls to DataSnapshot.getValue(User.class)
     }
 
-    public User(String username, String email , String profilePicUrl) {
+    public User(String userId,String username, String email , String profilePicUrl) {
+        this.userId = userId;
         this.username = username;
         this.email = email;
         this.profilePicUrl = profilePicUrl;
     }
 
-    public void writeNewUser(String userId, String name, String email , String profilePicUrl) {
-        User user = new User(name, email , profilePicUrl);
-        mDatabase.child("users").child(userId).setValue(user);
+    public User(FirebaseUser currentUser , Context context) {
+        this.userId = currentUser.getUid();
+        this.email = currentUser.getEmail();
+        this.username= currentUser.getDisplayName();
+        this.profilePicUrl= AppUtils.getDPUrl(context);
+    }
+
+    public static void writeUser(User user) {
+        DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase.child(F_TABLE_NAME).child(user.getUserId()).child(C_NAME).setValue(user.getUsername());
+        mDatabase.child(F_TABLE_NAME).child(user.getUserId()).child(C_EMAIL).setValue(user.getEmail());
+        mDatabase.child(F_TABLE_NAME).child(user.getUserId()).child(C_DP_URL).setValue(user.getProfilePicUrl());
+
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getProfilePicUrl() {
+        return profilePicUrl;
+    }
+
+    public void setProfilePicUrl(String profilePicUrl) {
+        this.profilePicUrl = profilePicUrl;
     }
 }

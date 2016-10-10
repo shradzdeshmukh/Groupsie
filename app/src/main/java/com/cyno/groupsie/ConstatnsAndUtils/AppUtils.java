@@ -57,4 +57,9 @@ public class AppUtils {
                     Uri.parse("https://play.google.com/store/apps/details?id=" + context.getPackageName())));
         }
     }
+
+    public static String getDPUrl(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).
+                getString(Constants.USER_DP_URL, "");
+    }
 }

@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.cyno.groupsie.R;
 import com.cyno.groupsie.adapters.LoginPagerAdapter;
 import com.cyno.groupsie.constatnsAndUtils.Constants;
+import com.cyno.groupsie.models.User;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
 import com.facebook.FacebookCallback;
@@ -147,6 +148,8 @@ public class LoginActivity extends BaseActivity {
         if (user != null) {
             // User is signed in
             Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+            User usr = new User(user.getUid() , user.getDisplayName() , user.getEmail() , url);
+            User.writeUser(usr);
             startNextActivity();
         } else {
             // User is signed out
@@ -169,5 +172,6 @@ public class LoginActivity extends BaseActivity {
 
     private void startNextActivity(){
         startActivity(new Intent(this , AlbumListActivity.class));
+        finish();
     }
 }
