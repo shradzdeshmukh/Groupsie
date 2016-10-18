@@ -62,4 +62,6 @@ public class AppUtils {
         return PreferenceManager.getDefaultSharedPreferences(context).
                 getString(Constants.USER_DP_URL, "");
     }
+
+
 }

@@ -7,7 +7,7 @@ android {
     defaultConfig {
         applicationId "com.cyno.groupsie"
         minSdkVersion 15
-        targetSdkVersion 23
+        targetSdkVersion 22
         versionCode 1
         versionName "1.0"
     }
@@ -38,6 +38,7 @@ dependencies {
     compile 'me.relex:circleindicator:1.2.1@aar'
     compile 'com.android.support:design:23.4.0'
     compile 'com.facebook.stetho:stetho:1.+'
+
 }
 
 apply plugin: 'com.google.gms.google-services'

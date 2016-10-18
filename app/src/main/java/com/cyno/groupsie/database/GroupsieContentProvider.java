@@ -100,12 +100,15 @@ public class GroupsieContentProvider extends ContentProvider {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
+
             AlbumTable.onCreate(db);
+            PhotosTable.onCreate(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             AlbumTable.onUpdate(db, oldVersion, newVersion);
+            PhotosTable.onUpdate(db, oldVersion, newVersion);
         }
     }
 }

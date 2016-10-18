@@ -1,6 +1,7 @@
 package com.cyno.groupsie.constatnsAndUtils;
 
 import android.content.Context;
+import android.net.Uri;
 import android.util.Log;
 
 import com.amazonaws.ClientConfiguration;
@@ -11,6 +12,7 @@ import com.amazonaws.mobileconnectors.s3.transferutility.TransferState;
 import com.amazonaws.mobileconnectors.s3.transferutility.TransferUtility;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.s3.AmazonS3Client;
+import com.cyno.groupsie.models.Photo;
 
 import java.io.File;
 
@@ -19,21 +21,28 @@ import java.io.File;
  */
 public class AmazonUtils {
 
+    public static String AMAZON_DIR = "https://s3.amazonaws.com/dinogroupsie/";
     private static ClientConfiguration connectionConfig;
     private static TransferUtility sTransferUtility;
     private static AmazonS3Client sS3Client;
     private static CognitoCachingCredentialsProvider sCredProvider;
 
-    public static final void uploadImage(Context context, String amazonDir, String localImagePath) {
+    public static final void uploadImage(final Context context, final String amazonDir, final Photo photo) {
 
-        File mFile = new File(localImagePath);
+        File mFile = new File(Uri.parse(photo.getPhotoLocalUrl()).getPath());
+        Log.d("amazon" , "path " +photo.getPhotoLocalUrl());
         Log.d("amazon" , mFile.getTotalSpace()+"");
         TransferUtility transferUtility = getTransferUtility(context);
         TransferObserver obs = transferUtility.upload(Constants.AMAZON_S3_BUCKET, amazonDir, mFile);
         obs.setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
-                Log.d("amazon" , "state schanged= " );
+                Log.d("amazon" , "state schanged= " + state.name());
+                Photo mLocalPhoto = photo;
+                mLocalPhoto.setPhotoServerUrl(AMAZON_DIR+amazonDir);
+                Log.d("amazon","url = "+mLocalPhoto.getPhotoServerUrl());
+                Photo.syncToFirebase(context , mLocalPhoto);
+
             }
 
             @Override
