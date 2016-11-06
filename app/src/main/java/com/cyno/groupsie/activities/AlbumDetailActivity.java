@@ -13,6 +13,7 @@ import android.view.View;
 import com.cyno.groupsie.R;
 import com.cyno.groupsie.adapters.AlbumDetailPagerAdapter;
 import com.cyno.groupsie.constatnsAndUtils.ImageUtils;
+import com.cyno.groupsie.constatnsAndUtils.PhotoUtils;
 import com.cyno.groupsie.models.Album;
 import com.cyno.groupsie.models.Photo;
 
@@ -56,7 +57,7 @@ public class AlbumDetailActivity extends AppCompatActivity {
 
     private void takeImage() {
         try {
-            currentImageFile = ImageUtils.dispatchTakePictureIntent(this);
+            currentImageFile = ImageUtils.dispatchTakePictureIntent(this, PhotoUtils.getPhotoId(currentAlbum.getAlbumId()));
             Log.d("imagepath", "" + currentImageFile.getName());
 //            ImageUtils.putCurrentImageName(currentImageName, this);
 
@@ -78,7 +79,10 @@ public class AlbumDetailActivity extends AppCompatActivity {
             Photo photo = new Photo();
             photo.setPhotoId(currentImageFile.getName());
             photo.setAlbumId(currentAlbum.getAlbumId());
-            photo.setPhotoLocalUrl(currentImageFile.getAbsolutePath());
+            photo.setPhotoLocalUrl(currentImageFile.getPath());
+            Log.d("path", currentImageFile.getPath());
+            Log.d("path", currentImageFile.getName());
+            ImageUtils.compressImage(this, currentImageFile);
             Photo.uploadAndInsert(this, photo);
 
         } else {

@@ -5,13 +5,17 @@ import android.content.Context;
 import android.database.Cursor;
 import android.os.Parcel;
 import android.os.Parcelable;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.cyno.groupsie.constatnsAndUtils.AmazonUtils;
+import com.cyno.groupsie.constatnsAndUtils.PhotoUtils;
 import com.cyno.groupsie.database.PhotosTable;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+
+import java.io.IOException;
 
 /**
  * Created by hp on 14-10-2016.
@@ -29,10 +33,10 @@ public class Photo implements Parcelable {
             return new Photo[size];
         }
     };
-    private static final String F_TABLE_NAME = "Photos";
-    private static final String C_PHOTO_ID = "photo_id";
-    private static final String C_ALBUM_ID = "album_id";
-    private static final String C_PHOTO_URL = "photo_url";
+    public static final String F_TABLE_NAME = "Photos";
+    public static final String C_PHOTO_ID = "photo_id";
+    public static final String C_ALBUM_ID = "album_id";
+    public static final String C_PHOTO_URL = "photo_url";
     private String photoId;
     private String photoLocalUrl;
     private String photoServerUrl;
@@ -51,14 +55,15 @@ public class Photo implements Parcelable {
     public static void uploadAndInsert(Context context, Photo photo) {
 //        uploadToFirebase(photo);
         insertOrUpdate(context, photo);
-        AmazonUtils.uploadImage(context, photo.getAlbumId() + "/" + photo.getPhotoId(), photo);
+        AmazonUtils.uploadImage(context, PhotoUtils.getAmazonFolder(photo), photo);
     }
 
     public static void insertOrUpdate(Context context, Photo photo) {
         ContentValues values = new ContentValues();
         values.put(PhotosTable.COL_PHOTO_ID, photo.getPhotoId());
         values.put(PhotosTable.COL_ALBUM_UNIQUE_ID, photo.getAlbumId());
-        values.put(PhotosTable.COL_PHOTO_LOCAL_URL, photo.getPhotoLocalUrl());
+        if (!TextUtils.isEmpty(photo.getPhotoLocalUrl()))
+            values.put(PhotosTable.COL_PHOTO_LOCAL_URL, photo.getPhotoLocalUrl());
         values.put(PhotosTable.COL_PHOTO_SERVER_URL, photo.getPhotoServerUrl());
         int count = context.getContentResolver().update(PhotosTable.CONTENT_URI, values,
                 PhotosTable.COL_PHOTO_ID + " = ? ", new String[]{photo.getPhotoId()});
@@ -80,15 +85,33 @@ public class Photo implements Parcelable {
         String dbPath = photo.getPhotoId().replace(".", "");
         mDatabase.child(F_TABLE_NAME).child(dbPath).child(C_PHOTO_ID).setValue(photo.getPhotoId());
         mDatabase.child(F_TABLE_NAME).child(dbPath).child(C_ALBUM_ID).setValue(photo.getAlbumId());
+        mDatabase.child(F_TABLE_NAME).child(dbPath).child(C_PHOTO_URL).setValue(photo.getPhotoServerUrl());
     }
 
-    public static void getPhotoData(Context context, DataSnapshot dataSnapshot) {
+    public static void getPhotoDataAndStoreLocally(Context context, DataSnapshot dataSnapshot) throws IOException {
         Log.d("photo", dataSnapshot.toString());
         Photo photo = new Photo();
         photo.setPhotoId(dataSnapshot.child(C_PHOTO_ID).getValue().toString());
         photo.setAlbumId(dataSnapshot.child(C_ALBUM_ID).getValue().toString());
-        photo.setPhotoLocalUrl(dataSnapshot.child(C_PHOTO_URL).getValue().toString());
-        Photo.insertOrUpdate(context, photo);
+        photo.setPhotoServerUrl(dataSnapshot.child(C_PHOTO_URL).getValue().toString());
+        if (!isPhotoLocallyPresent(photo.getPhotoId(), context)) {
+            PhotoUtils.savePicToFile(photo, context);
+            Photo.insertOrUpdate(context, photo);
+        }
+    }
+
+    private static boolean isPhotoLocallyPresent(String photoId, Context context) {
+        boolean isPresent = false;
+        Cursor cursor = context.getContentResolver().query(PhotosTable.CONTENT_URI, new
+                        String[]{PhotosTable.COL_PHOTO_LOCAL_URL}, PhotosTable.COL_PHOTO_ID + " = ? ",
+                new String[]{photoId}, null);
+        if (cursor != null) {
+            if (cursor.moveToNext()) {
+                isPresent = !TextUtils.isEmpty(cursor.getString(cursor.getColumnIndex(PhotosTable.COL_PHOTO_LOCAL_URL)));
+            }
+            cursor.close();
+        }
+        return isPresent;
     }
 
     public static void syncToFirebase(Context context, Photo mLocalPhoto) {
@@ -139,5 +162,16 @@ public class Photo implements Parcelable {
 
     public void setPhotoServerUrl(String photoServerUrl) {
         this.photoServerUrl = photoServerUrl;
+    }
+
+
+    @Override
+    public String toString() {
+        return "Photo{" +
+                "photoId='" + photoId + '\'' +
+                ", photoLocalUrl='" + photoLocalUrl + '\'' +
+                ", photoServerUrl='" + photoServerUrl + '\'' +
+                ", albumId='" + albumId + '\'' +
+                '}';
     }
 }

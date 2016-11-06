@@ -17,6 +17,7 @@ import android.widget.GridView;
 import com.cyno.groupsie.R;
 import com.cyno.groupsie.activities.AlbumDetailActivity;
 import com.cyno.groupsie.adapters.PhotosGridAdapter;
+import com.cyno.groupsie.constatnsAndUtils.PhotoUtils;
 import com.cyno.groupsie.database.PhotosTable;
 
 /**
@@ -46,6 +47,8 @@ public class AlbumPhotosFragment extends Fragment implements LoaderManager.Loade
         adapter = new PhotosGridAdapter(getActivity(), null, CursorAdapter.FLAG_REGISTER_CONTENT_OBSERVER);
         gvPhotos.setAdapter(adapter);
         getLoaderManager().initLoader(LOADER_ID, null, this);
+
+        PhotoUtils.getAllPhotos(getActivity(), ((AlbumDetailActivity) getActivity()).getCurrentAlbum().getAlbumId());
 
     }
 

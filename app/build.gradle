@@ -38,6 +38,7 @@ dependencies {
     compile 'me.relex:circleindicator:1.2.1@aar'
     compile 'com.android.support:design:23.4.0'
     compile 'com.facebook.stetho:stetho:1.+'
+    compile 'id.zelory:compressor:1.0.3'
 
 }
 

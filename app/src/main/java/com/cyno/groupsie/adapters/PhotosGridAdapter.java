@@ -2,6 +2,7 @@ package com.cyno.groupsie.adapters;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CursorAdapter;
@@ -34,7 +35,12 @@ public class PhotosGridAdapter extends CursorAdapter {
     @Override
     public void bindView(View view, Context context, Cursor cursor) {
         ViewHolder holder = (ViewHolder) view.getTag(R.string.viewholder);
-        Picasso.with(context).load(cursor.getString(cursor.getColumnIndex(PhotosTable.COL_PHOTO_LOCAL_URL)))
+        Log.d("adapter", "file:///" + cursor.getString(cursor.getColumnIndex(PhotosTable.COL_PHOTO_LOCAL_URL)) + "");
+        String imageFile = "file:///" + cursor.getString(cursor.getColumnIndex(PhotosTable.COL_PHOTO_LOCAL_URL));
+        Picasso.with(context)
+                .load(imageFile)
+                .resize(480, 640)
+                .centerInside()
                 .into(holder.imgPhoto);
 
     }

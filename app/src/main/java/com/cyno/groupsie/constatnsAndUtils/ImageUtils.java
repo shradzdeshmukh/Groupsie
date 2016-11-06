@@ -13,8 +13,8 @@ import android.util.Log;
 
 import java.io.File;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+
+import id.zelory.compressor.Compressor;
 
 /**
  * Created by hp on 13-10-2016.
@@ -25,10 +25,9 @@ public class ImageUtils {
     private static final String DIRECTORY_NAME = "Groupsie";
     private static final String KEY_CURRENT_IMAGE_PATH = "image";
 
-    public static File getImageFile(Context context) throws IOException {
+    public static File getImageFile(String photoId) throws IOException {
         // Create an image file name
-        String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "Groupsie_" + timeStamp + ".jpg";
+        String imageFileName = "Groupsie_" + photoId + ".jpg";
         // Save a file: path for use with ACTION_VIEW intents
         checkOrCreateDirectory();
         return new File(Environment.getExternalStorageDirectory() + "/" + DIRECTORY_NAME + "/" + imageFileName);
@@ -41,12 +40,12 @@ public class ImageUtils {
     }
 
 
-    public static File dispatchTakePictureIntent(Context context) throws IOException {
+    public static File dispatchTakePictureIntent(Context context, String photoId) throws IOException {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
         // Ensure` that there's a camera activity to handle the intent
         if (takePictureIntent.resolveActivity(context.getPackageManager()) != null) {
             // Create the File where the photo should go
-            File photoFile = getImageFile(context);
+            File photoFile = getImageFile(photoId);
             Log.d("file", "file name = " + photoFile.getName());
             // Continue only if the File was successfully created
             if (photoFile != null) {
@@ -74,5 +73,26 @@ public class ImageUtils {
 
     public static String getCurrentImageName(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getString(KEY_CURRENT_IMAGE_PATH, null);
+    }
+
+    public static void compressImage(Context context, File file) {
+        new Compressor.Builder(context)
+                .setMaxWidth(getMaxWidth())
+                .setMaxHeight(getMaxHeight())
+                .setQuality(getQuality()).build()
+                .compressToBitmap(file);
+
+    }
+
+    private static int getQuality() {
+        return 80;
+    }
+
+    private static float getMaxHeight() {
+        return 640;
+    }
+
+    private static float getMaxWidth() {
+        return 480;
     }
 }
