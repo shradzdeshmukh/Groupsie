@@ -7,8 +7,24 @@
     <EditText
         android:id="@+id/edt_create_album"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:hint="@string/enter_album_title"
         android:padding="@dimen/normal_padding" />
+
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/normal_padding_5"
+        android:layout_marginTop="@dimen/normal_padding"
+        android:padding="@dimen/normal_padding_5"
+        android:text="@string/add_friends_txt"
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        android:textStyle="bold" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/rv_add_friends_dialog"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

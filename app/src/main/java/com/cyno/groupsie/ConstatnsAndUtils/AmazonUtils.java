@@ -21,6 +21,8 @@ import java.io.File;
  */
 public class AmazonUtils {
 
+    private static final String COMPLETED = "COMPLETED";
+
     public static String AMAZON_DIR = "https://s3.amazonaws.com/dinogroupsie/";
     private static ClientConfiguration connectionConfig;
     private static TransferUtility sTransferUtility;
@@ -28,31 +30,46 @@ public class AmazonUtils {
     private static CognitoCachingCredentialsProvider sCredProvider;
 
     public static final void uploadImage(final Context context, final String amazonDir, final Photo photo) {
-
         File mFile = new File(Uri.parse(photo.getPhotoLocalUrl()).getPath());
         Log.d("amazon" , "path " +photo.getPhotoLocalUrl());
         Log.d("amazon" , mFile.getTotalSpace()+"");
+
+        mFile = ImageUtils.compressToUploadImage(context, mFile);
+
         TransferUtility transferUtility = getTransferUtility(context);
         TransferObserver obs = transferUtility.upload(Constants.AMAZON_S3_BUCKET, amazonDir, mFile);
         obs.setTransferListener(new TransferListener() {
             @Override
             public void onStateChanged(int id, TransferState state) {
                 Log.d("amazon" , "state schanged= " + state.name());
-                Photo mLocalPhoto = photo;
-                mLocalPhoto.setPhotoServerUrl(AMAZON_DIR+amazonDir);
-                Log.d("amazon","url = "+mLocalPhoto.getPhotoServerUrl());
-                Photo.syncToFirebase(context , mLocalPhoto);
-
+                Log.d("amazon", "id= " + id);
+                if (state.name().equals(COMPLETED)) {
+                    Photo mLocalPhoto = photo;
+                    mLocalPhoto.setPhotoServerUrl(AMAZON_DIR + amazonDir);
+                    Log.d("amazon", "url = " + mLocalPhoto.getPhotoServerUrl());
+                    Photo.syncToFirebase(context, mLocalPhoto);
+                    mLocalPhoto.setState(Photo.state.STATE_ON_SERVER.ordinal());
+                    Photo.insertOrUpdate(context, mLocalPhoto);
+                }
             }
 
             @Override
             public void onProgressChanged(int id, long bytesCurrent, long bytesTotal) {
                 Log.d("amazon" , "current byytes = " + bytesCurrent);
+                Photo mLocalPhoto = photo;
+                mLocalPhoto.setState(Photo.state.STATE_UPLOADING.ordinal());
+                mLocalPhoto.setProgressSize((int) bytesCurrent);
+                Photo.insertOrUpdate(context, mLocalPhoto);
+
             }
 
             @Override
             public void onError(int id, Exception ex) {
                 Log.d("amazon" , "error = " + ex.getLocalizedMessage());
+                Photo mLocalPhoto = photo;
+                mLocalPhoto.setState(Photo.state.STATE_ERROR_UPLOADING.ordinal());
+                Photo.insertOrUpdate(context, mLocalPhoto);
+
             }
         });
     }

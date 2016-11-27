@@ -3,6 +3,7 @@ package com.cyno.groupsie.constatnsAndUtils;
 import android.content.Context;
 import android.util.Log;
 
+import com.cyno.groupsie.Interfaces.IProgressListner;
 import com.cyno.groupsie.models.Album;
 import com.cyno.groupsie.models.Member;
 import com.google.firebase.auth.FirebaseUser;
@@ -31,10 +32,10 @@ public class AlbumUtils {
         return 123;
     }
 
-    public static void getAllAlbums(final Context context, FirebaseUser user) {
+    public static void getAllAlbums(final Context context, FirebaseUser user, final IProgressListner progressListner) {
 
         final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("/Member/");
-
+        progressListner.showProgress();
         final Query query = mDatabase.orderByChild("user_id").equalTo(user.getUid());
         valueListnerMembers = new ValueEventListener() {
             @Override
@@ -44,12 +45,15 @@ public class AlbumUtils {
                 getAllAlbums(context, memberList);
                 mDatabase.removeEventListener(valueListnerMembers);
                 query.removeEventListener(valueListnerMembers);
+                progressListner.onDataLoaded();
+
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 mDatabase.removeEventListener(valueListnerMembers);
                 query.removeEventListener(valueListnerMembers);
+                progressListner.onDataLoaded();
 
             }
         };

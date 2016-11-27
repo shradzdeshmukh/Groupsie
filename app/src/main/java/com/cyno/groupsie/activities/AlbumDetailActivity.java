@@ -80,10 +80,13 @@ public class AlbumDetailActivity extends AppCompatActivity {
             photo.setPhotoId(currentImageFile.getName());
             photo.setAlbumId(currentAlbum.getAlbumId());
             photo.setPhotoLocalUrl(currentImageFile.getPath());
+            photo.setFileSize(currentImageFile.length());
             Log.d("path", currentImageFile.getPath());
             Log.d("path", currentImageFile.getName());
             ImageUtils.compressImage(this, currentImageFile);
+            PhotoUtils.setProminentColor(this, photo);
             Photo.uploadAndInsert(this, photo);
+
 
         } else {
             Log.d("pic", "nopic");

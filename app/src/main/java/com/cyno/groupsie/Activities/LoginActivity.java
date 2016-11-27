@@ -28,6 +28,7 @@ import android.widget.Toast;
 import com.cyno.groupsie.R;
 import com.cyno.groupsie.adapters.LoginPagerAdapter;
 import com.cyno.groupsie.constatnsAndUtils.Constants;
+import com.cyno.groupsie.constatnsAndUtils.FBUtils;
 import com.cyno.groupsie.models.User;
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
@@ -77,7 +78,10 @@ public class LoginActivity extends BaseActivity {
         mCallbackManager = CallbackManager.Factory.create();
         LoginButton loginButton = (LoginButton) findViewById(R.id.button_facebook_login);
         loginButton.setReadPermissions("email", "public_profile");
+        loginButton.setReadPermissions("user_friends", "public_profile");
+
         loginButton.registerCallback(mCallbackManager, new FacebookCallback<LoginResult>() {
+
             @Override
             public void onSuccess(LoginResult loginResult) {
                 Log.d(TAG, "facebook:onSuccess:" + loginResult);
@@ -142,14 +146,16 @@ public class LoginActivity extends BaseActivity {
     public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
         super.onAuthStateChanged(firebaseAuth);
         FirebaseUser user = firebaseAuth.getCurrentUser();
-        String url = "https://graph.facebook.com/" + PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_FB_UID, "") + "/picture?type=large&width=500&height=500";
+        String fbUid = PreferenceManager.getDefaultSharedPreferences(this).getString(KEY_FB_UID,"");
+        String url = FBUtils.getProfilePicUrl(fbUid);
         PreferenceManager.getDefaultSharedPreferences(this).edit().
                 putString(Constants.USER_DP_URL, url).commit();
         if (user != null) {
             // User is signed in
             Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-            User usr = new User(user.getUid() , user.getDisplayName() , user.getEmail() , url);
+            User usr = new User(user.getUid() , user.getDisplayName() , user.getEmail() , url , fbUid);
             User.writeUser(usr);
+            FBUtils.GetFriendList(this , fbUid);
             startNextActivity();
         } else {
             // User is signed out

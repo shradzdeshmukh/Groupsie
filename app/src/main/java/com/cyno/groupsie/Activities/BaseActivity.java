@@ -12,6 +12,9 @@ import android.view.MenuItem;
 
 import com.cyno.groupsie.Interfaces.ILogoutListner;
 import com.cyno.groupsie.R;
+import com.cyno.groupsie.database.AlbumTable;
+import com.cyno.groupsie.database.FbFriendsTable;
+import com.cyno.groupsie.database.PhotosTable;
 import com.cyno.groupsie.sync.SyncUtils;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -111,6 +114,13 @@ public abstract class BaseActivity extends AppCompatActivity
     @Override
     public void onLogout() {
 
+        clearDb();
         LoginActivity.setLoggedIn(this, false);
+    }
+
+    private void clearDb() {
+        getContentResolver().delete(AlbumTable.CONTENT_URI, null, null);
+        getContentResolver().delete(FbFriendsTable.CONTENT_URI, null, null);
+        getContentResolver().delete(PhotosTable.CONTENT_URI, null, null);
     }
 }

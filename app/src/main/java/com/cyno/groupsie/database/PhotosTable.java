@@ -15,6 +15,10 @@ public class PhotosTable {
     public static final String COL_PHOTO_LOCAL_URL = "local_url";
     public static final String COL_PHOTO_SERVER_URL = "server_url";
     public static final String COL_ALBUM_UNIQUE_ID = "album_id";
+    public static final String COL_PHOTO_STATE = "photo_state";
+    public static final String COL_PHOTO_SIZE = "photo_size";
+    public static final String COL_PROMINENT_COLOR = "prominent_color";
+    public static final String COL_PROGRESS_SIZE = "progress_size";
 
     private static final String DATABASE_CREATE_NEW = "create table "
             + TABLE_NAME
@@ -23,6 +27,10 @@ public class PhotosTable {
             + COL_PHOTO_ID + " TEXT, "
             + COL_PHOTO_LOCAL_URL + " TEXT, "
             + COL_PHOTO_SERVER_URL + " TEXT, "
+            + COL_PHOTO_STATE + " TEXT, "
+            + COL_PHOTO_SIZE + " TEXT, "
+            + COL_PROMINENT_COLOR + " TEXT, "
+            + COL_PROGRESS_SIZE + " TEXT, "
             + COL_ALBUM_UNIQUE_ID + " TEXT  "
             + ");";
 

@@ -17,7 +17,7 @@ import android.util.Log;
 public class GroupsieContentProvider extends ContentProvider {
 
     public static final String AUTHORITY = "com.cyno.groupsie";
-    private static final String DATABASE_NAME = "alarms_db";
+    private static final String DATABASE_NAME = "groupsie_db";
     private static final int DATABASE_VERSION = 1;
     private static final int ALL_ALARMS = 1;
     private static final int SINGLE_ALARM = 2;
@@ -103,12 +103,14 @@ public class GroupsieContentProvider extends ContentProvider {
 
             AlbumTable.onCreate(db);
             PhotosTable.onCreate(db);
+            FbFriendsTable.onCreate(db);
         }
 
         @Override
         public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
             AlbumTable.onUpdate(db, oldVersion, newVersion);
             PhotosTable.onUpdate(db, oldVersion, newVersion);
+            FbFriendsTable.onUpdate(db, oldVersion, newVersion);
         }
     }
 }

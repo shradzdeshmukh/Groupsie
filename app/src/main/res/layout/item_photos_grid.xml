@@ -1,16 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/root_view"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="@dimen/normal_padding_5"
+    android:paddingRight="@dimen/normal_padding_5">
 
-    <ImageView
-        android:id="@+id/img_photo"
-        android:layout_width="wrap_content"
-        android:layout_height="200dp"
-        android:layout_margin="@dimen/normal_padding"
-        android:background="@color/colorPrimaryDark"
-        android:scaleType="centerCrop"
-        android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
+    <FrameLayout
+        android:layout_width="@dimen/photo_width"
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
 
+        <ImageView
+            android:id="@+id/img_photo"
+            android:layout_width="200dp"
+            android:layout_height="200dp"
+            android:layout_margin="@dimen/normal_padding"
+            android:scaleType="centerCrop" />
+
+        <ProgressBar
+            android:id="@+id/prg_upload"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <ProgressBar
+            android:id="@+id/prg_download"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="gone" />
+
+        <ImageView
+            android:id="@+id/img_upload_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_file_upload_white_48dp" />
+
+        <ImageView
+            android:id="@+id/img_download_error"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:src="@drawable/ic_file_download_white_48dp" />
+
+    </FrameLayout>
 </LinearLayout>

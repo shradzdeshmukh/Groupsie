@@ -23,4 +23,9 @@
     <string name="members">Members</string>
     <string name="tab_album">album</string>
     <string name="photos">Photos</string>
+    <string name="empty_list">No pics present</string>
+    <string name="tag_photo">upload</string>
+    <string name="tag_album_root">album</string>
+    <string name="add_friends_txt">Tap to include friends in album</string>
+    <string name="tag_add_friend">add_friend</string>
 </resources>

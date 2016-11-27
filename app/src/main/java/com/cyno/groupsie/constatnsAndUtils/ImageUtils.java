@@ -80,12 +80,22 @@ public class ImageUtils {
                 .setMaxWidth(getMaxWidth())
                 .setMaxHeight(getMaxHeight())
                 .setQuality(getQuality()).build()
-                .compressToBitmap(file);
+                .compressToFile(file);
 
     }
 
+    public static File compressToUploadImage(Context context, File file) {
+        return new Compressor.Builder(context)
+                .setMaxWidth(getMaxWidth())
+                .setMaxHeight(getMaxHeight())
+                .setQuality(getQuality()).build()
+                .compressToFile(file);
+
+    }
+
+
     private static int getQuality() {
-        return 80;
+        return 100;
     }
 
     private static float getMaxHeight() {

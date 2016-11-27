@@ -2,9 +2,14 @@ package com.cyno.groupsie.constatnsAndUtils;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.os.AsyncTask;
+import android.support.v7.graphics.Palette;
 import android.util.Log;
+import android.widget.Toast;
 
+import com.cyno.groupsie.Interfaces.IProgressListner;
 import com.cyno.groupsie.models.Photo;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -24,7 +29,7 @@ import java.io.IOException;
 public class PhotoUtils {
     private static ValueEventListener valueListnerPhotos;
 
-    public static void getAllPhotos(final Context context, String albumID) {
+    public static void getAllPhotos(final Context context, String albumID, final IProgressListner progressListner) {
         final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("/" + Photo.F_TABLE_NAME + "/");
         final Query query = mDatabase.orderByChild(Photo.C_ALBUM_ID).equalTo(albumID);
 
@@ -32,7 +37,9 @@ public class PhotoUtils {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 try {
-                    getSinglePhotoAndStoreLocally(dataSnapshot, context);
+                    getSinglePhotoAndStoreLocally(dataSnapshot, context, progressListner);
+                    Log.d("progress", "done loading");
+                    progressListner.onDataLoaded();
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -42,76 +49,75 @@ public class PhotoUtils {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 mDatabase.removeEventListener(valueListnerPhotos);
+                progressListner.onDataLoaded();
+                Toast.makeText(context, databaseError.getMessage(), Toast.LENGTH_LONG).show();
             }
         };
         query.addListenerForSingleValueEvent(valueListnerPhotos);
 
     }
 
-    private static void getSinglePhotoAndStoreLocally(DataSnapshot dataSnapshot, Context context) throws IOException {
+    private static void getSinglePhotoAndStoreLocally(DataSnapshot dataSnapshot, Context context, IProgressListner progressListner) throws IOException {
         for (DataSnapshot photo : dataSnapshot.getChildren()) {
-            Photo.getPhotoDataAndStoreLocally(context, photo);
+            Photo.getPhotoDataAndStoreLocally(context, photo, progressListner);
         }
     }
 
-    public static void savePicToFile(final Photo photo, final Context context) throws IOException {
-       /* Target target = new Target() {
+    public static void savePicToFile(final Photo photo, final Context context /*, final IProgressListner progressListner*/) {
+
+
+        new AsyncTask<Void, Void, String>() {
+
             @Override
-            public void onBitmapLoaded(final Bitmap bitmap, Picasso.LoadedFrom from) {
+            protected void onPreExecute() {
+                super.onPreExecute();
+                Log.d("async", "called asynctask");
+                photo.setState(Photo.state.STATE_DOWNLOADING.ordinal());
+                Photo.insertOrUpdate(context, photo);
+//                progressListner.showProgress();
+            }
+
+
+            @Override
+            protected String doInBackground(Void... params) {
+                File file = null;
                 try {
-                    File file = ImageUtils.getImageFile(context);
+                    Log.d("imagees", "loading " + photo.getPhotoServerUrl());
+                    Bitmap bitmap = Picasso.with(context).load(photo.getPhotoServerUrl()).get();
+                    file = ImageUtils.getImageFile(photo.getPhotoId());
                     FileOutputStream ostream = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG,100,ostream);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
+                    ImageUtils.compressImage(context, file);
                     ostream.close();
-                    photo.setPhotoLocalUrl(file.getParent());
-                    Log.d("local photo " , photo.toString());
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-
-            @Override
-            public void onBitmapFailed(Drawable errorDrawable) {
-                Log.d("local photo " , errorDrawable.toString());
-
-            }
-
-            @Override
-            public void onPrepareLoad(Drawable placeHolderDrawable) {
-
-            }
-        };*/
-
-        new AsyncTask<Void, Void, Bitmap>() {
-
-            @Override
-            protected Bitmap doInBackground(Void... params) {
-                try {
-                    return Picasso.with(context).load(photo.getPhotoServerUrl()).get();
+                    bitmap.recycle();
+                    return file.getPath();
                 } catch (IOException e) {
+                    photo.setState(Photo.state.STATE_ERROR_DOWNLOADING.ordinal());
+                    Photo.insertOrUpdate(context, photo);
+
+                    Log.d("imagees", "exception " + e.getMessage());
+
                     e.printStackTrace();
                 }
                 return null;
             }
 
             @Override
-            protected void onPostExecute(Bitmap bitmap) {
+            protected void onPostExecute(String bitmap) {
                 super.onPostExecute(bitmap);
-                File file = null;
-                try {
-                    file = ImageUtils.getImageFile(photo.getPhotoId());
-                    FileOutputStream ostream = new FileOutputStream(file);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 100, ostream);
-                    ImageUtils.compressImage(context, file);
-                    ostream.close();
-                    photo.setPhotoLocalUrl(file.getPath());
+                if (bitmap == null) {
+                    photo.setState(Photo.state.STATE_ERROR_DOWNLOADING.ordinal());
+                    Photo.insertOrUpdate(context, photo);
+
+                } else {
+                    Log.d("imagees", "url =  " + bitmap);
+                    photo.setPhotoLocalUrl(bitmap);
+                    photo.setProgressSize(-1);
+                    photo.setState(Photo.state.STATE_DOWNLOADED.ordinal());
                     Photo.insertOrUpdate(context, photo);
                     Log.d("amazon", "local pic = " + photo.toString());
-
-                } catch (IOException e) {
-                    e.printStackTrace();
+//                progressListner.onDataLoaded();
                 }
-
             }
         }.execute();
 
@@ -129,5 +135,17 @@ public class PhotoUtils {
 
     public static String getPhotoId(String albumId) {
         return albumId + "_" + System.currentTimeMillis();
+    }
+
+    public static void setProminentColor(final Context context, final Photo photo) {
+        Bitmap mBitmap = BitmapFactory.decodeFile(photo.getPhotoLocalUrl());
+        Palette.from(mBitmap).generate(new Palette.PaletteAsyncListener() {
+            @Override
+            public void onGenerated(Palette palette) {
+                Log.d("color", "" + palette.getDarkMutedSwatch().getBodyTextColor());
+                photo.setProminentColor(palette.getMutedColor(Color.GRAY));
+                Photo.insertOrUpdate(context, photo);
+            }
+        });
     }
 }
