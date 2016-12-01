@@ -153,9 +153,10 @@ public class LoginActivity extends BaseActivity {
         if (user != null) {
             // User is signed in
             Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
-            User usr = new User(user.getUid() , user.getDisplayName() , user.getEmail() , url , fbUid);
+            User usr = new User(fbUid, user.getDisplayName(), user.getEmail(), url);
             User.writeUser(usr);
             FBUtils.GetFriendList(this , fbUid);
+            setCurrentUser(usr);
             startNextActivity();
         } else {
             // User is signed out

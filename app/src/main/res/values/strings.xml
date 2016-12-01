@@ -28,4 +28,5 @@
     <string name="tag_album_root">album</string>
     <string name="add_friends_txt">Tap to include friends in album</string>
     <string name="tag_add_friend">add_friend</string>
+    <string name="tag_holder_add_friend">holder</string>
 </resources>

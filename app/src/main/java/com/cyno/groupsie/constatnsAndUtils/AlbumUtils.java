@@ -6,7 +6,7 @@ import android.util.Log;
 import com.cyno.groupsie.Interfaces.IProgressListner;
 import com.cyno.groupsie.models.Album;
 import com.cyno.groupsie.models.Member;
-import com.google.firebase.auth.FirebaseUser;
+import com.cyno.groupsie.models.User;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -32,11 +32,11 @@ public class AlbumUtils {
         return 123;
     }
 
-    public static void getAllAlbums(final Context context, FirebaseUser user, final IProgressListner progressListner) {
+    public static void getAllAlbums(final Context context, User user, final IProgressListner progressListner) {
 
         final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("/Member/");
         progressListner.showProgress();
-        final Query query = mDatabase.orderByChild("user_id").equalTo(user.getUid());
+        final Query query = mDatabase.orderByChild("user_id").equalTo(user.getUserId());
         valueListnerMembers = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {

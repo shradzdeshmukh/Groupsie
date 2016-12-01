@@ -104,6 +104,7 @@ public class GroupsieContentProvider extends ContentProvider {
             AlbumTable.onCreate(db);
             PhotosTable.onCreate(db);
             FbFriendsTable.onCreate(db);
+            MemberTable.onCreate(db);
         }
 
         @Override
@@ -111,6 +112,7 @@ public class GroupsieContentProvider extends ContentProvider {
             AlbumTable.onUpdate(db, oldVersion, newVersion);
             PhotosTable.onUpdate(db, oldVersion, newVersion);
             FbFriendsTable.onUpdate(db, oldVersion, newVersion);
+            MemberTable.onUpdate(db, oldVersion, newVersion);
         }
     }
 }

@@ -2,7 +2,9 @@ package com.cyno.groupsie.activities;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -15,6 +17,7 @@ import com.cyno.groupsie.R;
 import com.cyno.groupsie.database.AlbumTable;
 import com.cyno.groupsie.database.FbFriendsTable;
 import com.cyno.groupsie.database.PhotosTable;
+import com.cyno.groupsie.models.User;
 import com.cyno.groupsie.sync.SyncUtils;
 import com.facebook.login.LoginManager;
 import com.google.firebase.auth.FirebaseAuth;
@@ -27,6 +30,10 @@ public abstract class BaseActivity extends AppCompatActivity
         , ILogoutListner {
 
     private static final String TAG = "base activity";
+    private static final String KEY_USER_ID = "id";
+    private static final String KEY_USER_PROFILE_PIC = "prf_pic";
+    private static final String KEY_USER_NAME = "user_name";
+    private static final String KEY_USER_EMAIL = "email";
 
     private FirebaseAuth mAuth;
     private ProgressDialog mProgressDialog;
@@ -99,6 +106,24 @@ public abstract class BaseActivity extends AppCompatActivity
     protected void signOut() {
         mAuth.signOut();
         LoginManager.getInstance().logOut();
+    }
+
+    protected User getCurrentUser(){
+        User user = new User();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
+        user.setUserId(pref.getString(KEY_USER_ID , ""));
+        user.setProfilePicUrl(pref.getString(KEY_USER_PROFILE_PIC, ""));
+        user.setUsername(pref.getString(KEY_USER_NAME, ""));
+        user.setEmail(pref.getString(KEY_USER_EMAIL , ""));
+        return user;
+    }
+
+    protected void setCurrentUser(User user){
+        PreferenceManager.getDefaultSharedPreferences(this).edit().
+                putString(KEY_USER_ID , user.getUserId()).
+                putString(KEY_USER_PROFILE_PIC , user.getProfilePicUrl()).
+                putString(KEY_USER_NAME , user.getUsername()).
+                putString(KEY_USER_EMAIL , user.getEmail()).commit();
     }
 
     @Override

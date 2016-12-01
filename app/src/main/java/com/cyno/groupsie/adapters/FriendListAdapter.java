@@ -23,15 +23,13 @@ import java.util.ArrayList;
 public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.ViewHolder> {
     private final Context context;
     private final View.OnClickListener clickListner;
-    private final ViewGroup parent;
     private ArrayList<FBFriend> alFriendList;
 
-    public FriendListAdapter(Context context, ArrayList<FBFriend> alFriendList, View.OnClickListener clickListner, ViewGroup parentarent) {
+    public FriendListAdapter(Context context, ArrayList<FBFriend> alFriendList, View.OnClickListener clickListner) {
         super();
         this.context = context;
         this.alFriendList = alFriendList;
         this.clickListner = clickListner;
-        this.parent = parentarent;
     }
 
 
@@ -42,7 +40,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         rootView.setLayoutParams(lp);
         return new ViewHolder(rootView);*/
         return new ViewHolder(LayoutInflater.from(context)
-                .inflate(R.layout.item_add_friend_list, this.parent, false));
+                .inflate(R.layout.item_add_friend_list, parent, false));
     }
 
     @Override

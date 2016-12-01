@@ -38,6 +38,9 @@ public class AlbumDetailPagerAdapter extends FragmentStatePagerAdapter {
                 break;
             case 1:
                 fragment = new AlbumMembersFragment();
+                Bundle bundleMembers = new Bundle();
+                bundleMembers.putString(AlbumMembersFragment.KEY_ALBUM_ID, album.getAlbumId());
+                fragment.setArguments(bundleMembers);
                 break;
         }
         return fragment;

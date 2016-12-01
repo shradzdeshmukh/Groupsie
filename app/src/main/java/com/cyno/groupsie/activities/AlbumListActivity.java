@@ -27,7 +27,8 @@ import com.cyno.groupsie.database.AlbumTable;
 import com.cyno.groupsie.database.FbFriendsTable;
 import com.cyno.groupsie.models.Album;
 import com.cyno.groupsie.models.FBFriend;
-import com.google.firebase.auth.FirebaseUser;
+import com.cyno.groupsie.models.Member;
+import com.cyno.groupsie.models.User;
 
 import java.util.ArrayList;
 
@@ -66,7 +67,7 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
         getLoaderManager().initLoader(LOADER_ID_ALBUMS, null, this);
         getLoaderManager().initLoader(LOADER_ID_FRIENDS, null, this);
 
-        AlbumUtils.getAllAlbums(this, getAuth().getCurrentUser(), this);
+        AlbumUtils.getAllAlbums(this, getCurrentUser(), this);
 
     }
 
@@ -91,7 +92,7 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
                 friendListAdapter.notifyDataSetChanged();
 
             }
-        }, rvFriendList);
+        });
         rvFriendList.setAdapter(friendListAdapter);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -100,18 +101,26 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
                 .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        createNewAlbum(getAuth().getCurrentUser(), edtCreateAlbum.getText().toString());
+                        createNewAlbum(getCurrentUser(), edtCreateAlbum.getText().toString());
                     }
                 }).setNegativeButton(R.string.cancel, null).show();
     }
 
-    private void createNewAlbum(FirebaseUser user, String albumName) {
+    private void createNewAlbum(User user, String albumName) {
         Album album = new Album();
         album.setAlbumName(albumName);
         album.setAlbumId(AlbumUtils.getAlbumId());
         album.setCreateDate(System.currentTimeMillis());
         album.setGrade(AlbumUtils.getGrade());
-        Album.storeAndWriteAlbum(user.getUid(), album, this);
+        Album.storeAndWriteAlbum(user.getUserId(), album, this);
+
+        for (FBFriend friend : friendlist) {
+            if (friend.isSelected()) {
+                Member member = new Member(friend.getId(), album.getAlbumId());
+                Member.insertInDB(this, member);
+                Member.writeMember(member);
+            }
+        }
     }
 
     @Override
@@ -134,6 +143,7 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
                 break;
             case LOADER_ID_FRIENDS:
                 friendlist = FBFriend.getAllFriends(data);
+                friendListAdapter.notifyDataSetChanged();
                 break;
 
         }

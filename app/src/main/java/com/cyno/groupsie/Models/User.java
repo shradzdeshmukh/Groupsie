@@ -15,22 +15,22 @@ public class User {
     private static final String C_NAME = "name";
     private static final String C_EMAIL = "email";
     private static final String C_DP_URL = "pic";
-    private static final String C_FB_USER_ID = "fb_uid";
 
-    private String fbUserId;
     private String username;
     private String userId;
     private String email;
     private String profilePicUrl;
 
 
-
-    public User(String userId,String username, String email , String profilePicUrl, String fbUserId) {
+    public User(String userId, String username, String email, String profilePicUrl) {
         this.userId = userId;
         this.username = username;
         this.email = email;
         this.profilePicUrl = profilePicUrl;
-        this.fbUserId = fbUserId;
+    }
+
+    public User() {
+
     }
 
 
@@ -39,7 +39,6 @@ public class User {
         mDatabase.child(F_TABLE_NAME).child(user.getUserId()).child(C_NAME).setValue(user.getUsername());
         mDatabase.child(F_TABLE_NAME).child(user.getUserId()).child(C_EMAIL).setValue(user.getEmail());
         mDatabase.child(F_TABLE_NAME).child(user.getUserId()).child(C_DP_URL).setValue(user.getProfilePicUrl());
-        mDatabase.child(F_TABLE_NAME).child(user.getUserId()).child(C_FB_USER_ID).setValue(user.getFbUserId());
 
     }
 
@@ -75,11 +74,5 @@ public class User {
         this.profilePicUrl = profilePicUrl;
     }
 
-    public String getFbUserId() {
-        return fbUserId;
-    }
 
-    public void setFbUserId(String fbUserId) {
-        this.fbUserId = fbUserId;
-    }
 }

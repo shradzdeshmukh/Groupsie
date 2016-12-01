@@ -1,7 +1,11 @@
 package com.cyno.groupsie.models;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
+import com.cyno.groupsie.database.MemberTable;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -37,6 +41,20 @@ public class Member {
         member.setUserId(members.child(C_USER_ID).getValue().toString());
         member.setAlbumId(members.child(C_ALBUM_ID).getValue().toString());
         Log.d("Member data", "member = " + member.toString());
+        return member;
+    }
+
+    public static void insertInDB(Context context, Member member) {
+        ContentValues values = new ContentValues();
+        values.put(MemberTable.COL_ALBUM_ID, member.getAlbumId());
+        values.put(MemberTable.COL_USER_ID, member.getUserId());
+        context.getContentResolver().insert(MemberTable.CONTENT_URI, values);
+    }
+
+    public static Member getMember(Cursor cursor) {
+        Member member = new Member();
+        member.setAlbumId(cursor.getString(cursor.getColumnIndex(MemberTable.COL_ALBUM_ID)));
+        member.setUserId(cursor.getString(cursor.getColumnIndex(MemberTable.COL_USER_ID)));
         return member;
     }
 

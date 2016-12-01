@@ -44,6 +44,27 @@ public class FBFriend {
         return friendArrayList;
     }
 
+    public static FBFriend getFriend(String friendId, Context context) {
+        FBFriend friend = null;
+        Cursor cursor = context.getContentResolver().query(FbFriendsTable.CONTENT_URI, null,
+                FbFriendsTable.COL_FB_ID + " = ? ", new String[]{friendId}, null);
+        if (cursor != null) {
+            if (cursor.moveToNext()) {
+                friend = getFriend(cursor);
+            }
+            cursor.close();
+        }
+        return friend;
+    }
+
+    private static FBFriend getFriend(Cursor cursor) {
+        FBFriend friend = new FBFriend();
+        friend.setId(cursor.getString(cursor.getColumnIndex(FbFriendsTable.COL_FB_ID)));
+        friend.setProfilePicUrl(cursor.getString(cursor.getColumnIndex(FbFriendsTable.COL_FB_PROFILE_PIC_URL)));
+        friend.setName(cursor.getString(cursor.getColumnIndex(FbFriendsTable.COL_FRIEND_NAME)));
+        return friend;
+    }
+
     public String getName() {
         return name;
     }
