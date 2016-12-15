@@ -23,6 +23,7 @@ import com.cyno.groupsie.adapters.AlbumListAdapter;
 import com.cyno.groupsie.adapters.FriendListAdapter;
 import com.cyno.groupsie.constatnsAndUtils.AlbumListDecorator;
 import com.cyno.groupsie.constatnsAndUtils.AlbumUtils;
+import com.cyno.groupsie.constatnsAndUtils.UiUtils;
 import com.cyno.groupsie.database.AlbumTable;
 import com.cyno.groupsie.database.FbFriendsTable;
 import com.cyno.groupsie.models.Album;
@@ -40,11 +41,14 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
     private ArrayList<Album> alAlbumList = new ArrayList<>();
     private ArrayList<FBFriend> friendlist = new ArrayList<>();
     private FriendListAdapter friendListAdapter;
+    private View rootView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_album_list);
+        rootView = findViewById(R.id.root_view);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
@@ -62,6 +66,7 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
         rvAlbums.addItemDecoration(new AlbumListDecorator(this));
 
         adapter = new AlbumListAdapter(this, alAlbumList, this);
+
         rvAlbums.setAdapter(adapter);
 
         getLoaderManager().initLoader(LOADER_ID_ALBUMS, null, this);
@@ -93,6 +98,7 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
 
             }
         });
+
         rvFriendList.setAdapter(friendListAdapter);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -140,13 +146,21 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
         switch (loader.getId()) {
             case LOADER_ID_ALBUMS:
                 adapter.refreshList(data);
+                if (data.getCount() == 0) {
+                    UiUtils.showEmptyView(rootView, R.string.empty_list, R.drawable.com_facebook_profile_picture_blank_portrait);
+                } else {
+                    UiUtils.hideEmptyView(rootView);
+                }
                 break;
             case LOADER_ID_FRIENDS:
                 friendlist = FBFriend.getAllFriends(data);
-                friendListAdapter.notifyDataSetChanged();
                 break;
 
         }
+
+     /*   Cursor cursor = getContentResolver().query(FbFriendsTable.CONTENT_URI,null,null,null,null);
+        Log.d("cursor","cursor" +cursor.getCount());*/
+
     }
 
     @Override

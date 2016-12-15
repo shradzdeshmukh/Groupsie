@@ -41,7 +41,7 @@ public class AlbumUtils {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 Log.d("data", dataSnapshot.toString());
-                ArrayList<Member> memberList = getAllMembers(dataSnapshot);
+                ArrayList<Member> memberList = getAllMembers(dataSnapshot, context);
                 getAllAlbums(context, memberList);
                 mDatabase.removeEventListener(valueListnerMembers);
                 query.removeEventListener(valueListnerMembers);
@@ -85,10 +85,10 @@ public class AlbumUtils {
     }
 
 
-    private static ArrayList<Member> getAllMembers(DataSnapshot dataSnapshot) {
+    private static ArrayList<Member> getAllMembers(DataSnapshot dataSnapshot, Context context) {
         ArrayList<Member> memberArrayList = new ArrayList<>();
         for (DataSnapshot members : dataSnapshot.getChildren()) {
-            memberArrayList.add(Member.getMember(members));
+            memberArrayList.add(Member.getMemberAndStoreLocally(members, context));
 
         }
         return memberArrayList;

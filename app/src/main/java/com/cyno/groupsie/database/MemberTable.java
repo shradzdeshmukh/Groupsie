@@ -13,12 +13,14 @@ public class MemberTable {
     public static final String COL_ID = "_id";
     public static final String COL_ALBUM_ID = "album_id";
     public static final String COL_USER_ID = "user_id";
+    public static final String COL_IS_REQ_ACCEPTED = "is_req_accepted";
 
     private static final String DATABASE_CREATE_NEW = "create table "
             + TABLE_NAME
             + "("
             + COL_ID + " integer primary key autoincrement, "
             + COL_ALBUM_ID + " TEXT , "
+            + COL_IS_REQ_ACCEPTED + " Boolean , "
             + COL_USER_ID + " TEXT  "
             + ");";
 

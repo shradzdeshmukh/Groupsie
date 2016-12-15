@@ -16,6 +16,7 @@ import com.cyno.groupsie.Interfaces.ILogoutListner;
 import com.cyno.groupsie.R;
 import com.cyno.groupsie.database.AlbumTable;
 import com.cyno.groupsie.database.FbFriendsTable;
+import com.cyno.groupsie.database.MemberTable;
 import com.cyno.groupsie.database.PhotosTable;
 import com.cyno.groupsie.models.User;
 import com.cyno.groupsie.sync.SyncUtils;
@@ -133,13 +134,14 @@ public abstract class BaseActivity extends AppCompatActivity
             Intent mIntent = new Intent(this, LoginActivity.class);
             mIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
             startActivity(mIntent);
+            clearDb();
         }
     }
 
     @Override
     public void onLogout() {
 
-        clearDb();
+
         LoginActivity.setLoggedIn(this, false);
     }
 
@@ -147,5 +149,6 @@ public abstract class BaseActivity extends AppCompatActivity
         getContentResolver().delete(AlbumTable.CONTENT_URI, null, null);
         getContentResolver().delete(FbFriendsTable.CONTENT_URI, null, null);
         getContentResolver().delete(PhotosTable.CONTENT_URI, null, null);
+        getContentResolver().delete(MemberTable.CONTENT_URI, null, null);
     }
 }

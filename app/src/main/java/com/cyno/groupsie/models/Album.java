@@ -41,6 +41,7 @@ public class Album implements Parcelable {
     private String coverPicUrl;
     private int grade;
     private long createDate;
+    private boolean isAccepted;
 
     public Album() {
     }

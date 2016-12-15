@@ -165,10 +165,7 @@ public class LoginActivity extends BaseActivity {
 
     }
 
-    @Override
-    public void onLogout() {
 
-    }
 
     private void setViewPager(){
         ViewPager viewPager = (ViewPager) findViewById(R.id.viewpager);
