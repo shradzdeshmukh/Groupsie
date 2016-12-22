@@ -12,6 +12,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -26,6 +27,7 @@ import com.cyno.groupsie.constatnsAndUtils.AlbumUtils;
 import com.cyno.groupsie.constatnsAndUtils.UiUtils;
 import com.cyno.groupsie.database.AlbumTable;
 import com.cyno.groupsie.database.FbFriendsTable;
+import com.cyno.groupsie.database.MemberTable;
 import com.cyno.groupsie.models.Album;
 import com.cyno.groupsie.models.FBFriend;
 import com.cyno.groupsie.models.Member;
@@ -37,6 +39,8 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
 
     private static final int LOADER_ID_ALBUMS = 100;
     private static final int LOADER_ID_FRIENDS = 200;
+    private static final int LOADER_ID_REQUESTS = 300;
+
     private AlbumListAdapter adapter;
     private ArrayList<Album> alAlbumList = new ArrayList<>();
     private ArrayList<FBFriend> friendlist = new ArrayList<>();
@@ -71,6 +75,7 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
 
         getLoaderManager().initLoader(LOADER_ID_ALBUMS, null, this);
         getLoaderManager().initLoader(LOADER_ID_FRIENDS, null, this);
+        getLoaderManager().initLoader(LOADER_ID_REQUESTS, null, this);
 
         AlbumUtils.getAllAlbums(this, getCurrentUser(), this);
 
@@ -136,6 +141,9 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
                 return new CursorLoader(this, AlbumTable.CONTENT_URI, null, null, null, null);
             case LOADER_ID_FRIENDS:
                 return new CursorLoader(this, FbFriendsTable.CONTENT_URI, null, null, null, null);
+            case LOADER_ID_REQUESTS:
+                return new CursorLoader(this, MemberTable.CONTENT_URI, null,
+                        MemberTable.COL_IS_REQ_ACCEPTED + " = ? ", new String[]{"0"}, null);
 
         }
         return null;
@@ -154,6 +162,9 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
                 break;
             case LOADER_ID_FRIENDS:
                 friendlist = FBFriend.getAllFriends(data);
+                break;
+            case LOADER_ID_REQUESTS:
+                Log.d("requests", data.getCount() + "");
                 break;
 
         }
