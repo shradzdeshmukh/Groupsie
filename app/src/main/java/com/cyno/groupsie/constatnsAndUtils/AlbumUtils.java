@@ -1,9 +1,11 @@
 package com.cyno.groupsie.constatnsAndUtils;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.util.Log;
 
 import com.cyno.groupsie.Interfaces.IProgressListner;
+import com.cyno.groupsie.database.AlbumTable;
 import com.cyno.groupsie.models.Album;
 import com.cyno.groupsie.models.Member;
 import com.cyno.groupsie.models.User;
@@ -66,22 +68,26 @@ public class AlbumUtils {
             albumIds.add(member.getAlbumId());
         }
         for (String albumId : albumIds) {
-            final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("/Album/" + albumId);
-            valueListnerAlbums = new ValueEventListener() {
-                @Override
-                public void onDataChange(DataSnapshot dataSnapshot) {
-                    Album.getAlbumData(context, dataSnapshot);
-                    mDatabase.removeEventListener(valueListnerAlbums);
-                }
-
-                @Override
-                public void onCancelled(DatabaseError databaseError) {
-                    mDatabase.removeEventListener(valueListnerAlbums);
-                }
-            };
-            mDatabase.addListenerForSingleValueEvent(valueListnerAlbums);
+            getAlbum(context, albumId);
         }
 
+    }
+
+    public static void getAlbum(final Context context, String albumId) {
+        final DatabaseReference mDatabase = FirebaseDatabase.getInstance().getReference("/Album/" + albumId);
+        valueListnerAlbums = new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Album.getAlbumData(context, dataSnapshot);
+                mDatabase.removeEventListener(valueListnerAlbums);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mDatabase.removeEventListener(valueListnerAlbums);
+            }
+        };
+        mDatabase.addListenerForSingleValueEvent(valueListnerAlbums);
     }
 
 
@@ -92,5 +98,22 @@ public class AlbumUtils {
 
         }
         return memberArrayList;
+    }
+
+    public static Album getLocalAlbum(Context context, String albumId) {
+        Cursor cursor = context.getContentResolver().query(AlbumTable.CONTENT_URI, null,
+                AlbumTable.COL_ALBUM_UNIQUE_ID + " = ? ", new String[]{albumId}, null);
+        Album album = null;
+        if (cursor != null) {
+            if (cursor.moveToNext()) {
+                album = Album.getAlbum(cursor);
+            }
+            cursor.close();
+        }
+        return album;
+    }
+
+    public static String getAlbumName(Context context, String albumId) {
+        return getLocalAlbum(context, albumId).getAlbumName();
     }
 }

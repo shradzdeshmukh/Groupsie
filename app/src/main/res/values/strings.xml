@@ -29,4 +29,7 @@
     <string name="add_friends_txt">Tap to include friends in album</string>
     <string name="tag_add_friend">add_friend</string>
     <string name="tag_holder_add_friend">holder</string>
+    <string name="tag_requests">requests</string>
+    <string name="title_reject_album">Reject album request?</string>
+    <string name="msg_reject_album">Are you sure you want to reject this album request?</string>
 </resources>

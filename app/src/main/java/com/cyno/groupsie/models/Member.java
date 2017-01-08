@@ -10,6 +10,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.util.ArrayList;
+
 /**
  * Created by hp on 10-09-2016.
  */
@@ -46,7 +48,8 @@ public class Member {
         member.setUserId(members.child(C_USER_ID).getValue().toString());
         member.setAlbumId(members.child(C_ALBUM_ID).getValue().toString());
         member.setRequestAccepted((Boolean) members.child(C_IS_REQUEST_ACCEPTED).getValue());
-        Member.insertInDB(context, member);
+        if (!member.isRequestAccepted())
+            Member.insertInDB(context, member);
         Log.d("Member data", "member = " + member.toString());
         return member;
     }
@@ -56,15 +59,30 @@ public class Member {
         values.put(MemberTable.COL_ALBUM_ID, member.getAlbumId());
         values.put(MemberTable.COL_USER_ID, member.getUserId());
         values.put(MemberTable.COL_IS_REQ_ACCEPTED, member.isRequestAccepted());
-        context.getContentResolver().insert(MemberTable.CONTENT_URI, values);
+        int count = context.getContentResolver().update(MemberTable.CONTENT_URI, values, MemberTable.COL_USER_ID
+                        + " = ? AND " + MemberTable.COL_ALBUM_ID + " = ? ",
+                new String[]{member.getUserId(), member.getAlbumId()});
+        if (count == 0)
+            context.getContentResolver().insert(MemberTable.CONTENT_URI, values);
     }
 
-    public static Member getMemberAndStoreLocally(Cursor cursor) {
+    public static Member getMember(Cursor cursor) {
         Member member = new Member();
         member.setAlbumId(cursor.getString(cursor.getColumnIndex(MemberTable.COL_ALBUM_ID)));
         member.setUserId(cursor.getString(cursor.getColumnIndex(MemberTable.COL_USER_ID)));
         member.setRequestAccepted(cursor.getString(cursor.getColumnIndex(MemberTable.COL_IS_REQ_ACCEPTED)).equalsIgnoreCase("1"));
         return member;
+    }
+
+    public static ArrayList<Member> getAllMembers(Cursor cursor) {
+        ArrayList<Member> alMembers = new ArrayList<>();
+        if (cursor != null && cursor.getCount() > 0) {
+            while (cursor.moveToNext()) {
+                alMembers.add(getMember(cursor));
+            }
+            cursor.close();
+        }
+        return alMembers;
     }
 
     public String getUserId() {

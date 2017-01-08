@@ -20,7 +20,8 @@ import com.google.firebase.database.IgnoreExtraProperties;
 @IgnoreExtraProperties
 public class Album implements Parcelable {
 
-    public static final Parcelable.Creator<Album> CREATOR = new Parcelable.Creator<Album>() {
+
+    public static final Creator<Album> CREATOR = new Creator<Album>() {
         @Override
         public Album createFromParcel(Parcel source) {
             return new Album(source);
@@ -41,17 +42,10 @@ public class Album implements Parcelable {
     private String coverPicUrl;
     private int grade;
     private long createDate;
-    private boolean isAccepted;
+    private boolean isRequestAccepted;
+
 
     public Album() {
-    }
-
-    public Album(String albumId, String albumName, String coverPicUrl, int grade, long createDate) {
-        this.albumId = albumId;
-        this.albumName = albumName;
-        this.coverPicUrl = coverPicUrl;
-        this.grade = grade;
-        this.createDate = createDate;
     }
 
     protected Album(Parcel in) {
@@ -60,6 +54,7 @@ public class Album implements Parcelable {
         this.coverPicUrl = in.readString();
         this.grade = in.readInt();
         this.createDate = in.readLong();
+        this.isRequestAccepted = in.readByte() != 0;
     }
 
     private static void writeAlbum(Album album) {
@@ -88,6 +83,7 @@ public class Album implements Parcelable {
         album.setCreateDate(cursor.getLong(cursor.getColumnIndex(AlbumTable.COL_CREATE_DATE)));
         album.setCoverPicUrl(cursor.getString(cursor.getColumnIndex(AlbumTable.COL_COVER_PIC)));
         album.setGrade(cursor.getInt(cursor.getColumnIndex(AlbumTable.COL_GRADE)));
+        album.setRequestAccepted(cursor.getString(cursor.getColumnIndex(AlbumTable.COL_IS_REQ_ACCEPTED)).equalsIgnoreCase("1"));
         return album;
     }
 
@@ -98,6 +94,7 @@ public class Album implements Parcelable {
         values.put(AlbumTable.COL_COVER_PIC, album.getCoverPicUrl());
         values.put(AlbumTable.COL_GRADE, album.getGrade());
         values.put(AlbumTable.COL_CREATE_DATE, album.getCreateDate());
+        values.put(AlbumTable.COL_IS_REQ_ACCEPTED, album.isRequestAccepted());
         int count = context.getContentResolver().update(AlbumTable.CONTENT_URI, values,
                 AlbumTable.COL_ALBUM_UNIQUE_ID + " = ? ", new String[]{album.getAlbumId()});
         if (count == 0)
@@ -150,6 +147,14 @@ public class Album implements Parcelable {
         this.createDate = createDate;
     }
 
+    public boolean isRequestAccepted() {
+        return isRequestAccepted;
+    }
+
+    public void setRequestAccepted(boolean requestAccepted) {
+        isRequestAccepted = requestAccepted;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -162,5 +167,6 @@ public class Album implements Parcelable {
         dest.writeString(this.coverPicUrl);
         dest.writeInt(this.grade);
         dest.writeLong(this.createDate);
+        dest.writeByte(this.isRequestAccepted ? (byte) 1 : (byte) 0);
     }
 }

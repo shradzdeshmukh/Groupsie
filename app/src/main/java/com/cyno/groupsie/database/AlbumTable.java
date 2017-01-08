@@ -16,6 +16,7 @@ public class AlbumTable {
     public static final String COL_GRADE = "grade";
     public static final String COL_COVER_PIC = "cover_pic";
     public static final String COL_CREATE_DATE = "create_date";
+    public static final String COL_IS_REQ_ACCEPTED = "is_req_accepted";
 
     private static final String DATABASE_CREATE_NEW = "create table "
             + TABLE_NAME
@@ -25,6 +26,7 @@ public class AlbumTable {
             + COL_ALBUM_NAME + " TEXT , "
             + COL_GRADE + " TEXT , "
             + COL_COVER_PIC + " TEXT , "
+            + COL_IS_REQ_ACCEPTED + " BOOLEAN , "
             + COL_CREATE_DATE + " TEXT  "
             + ");";
 

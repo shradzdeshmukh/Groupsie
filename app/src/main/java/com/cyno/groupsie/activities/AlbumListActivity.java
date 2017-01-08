@@ -22,6 +22,7 @@ import com.cyno.groupsie.Interfaces.IProgressListner;
 import com.cyno.groupsie.R;
 import com.cyno.groupsie.adapters.AlbumListAdapter;
 import com.cyno.groupsie.adapters.FriendListAdapter;
+import com.cyno.groupsie.adapters.RequestsListAdapter;
 import com.cyno.groupsie.constatnsAndUtils.AlbumListDecorator;
 import com.cyno.groupsie.constatnsAndUtils.AlbumUtils;
 import com.cyno.groupsie.constatnsAndUtils.UiUtils;
@@ -35,15 +36,19 @@ import com.cyno.groupsie.models.User;
 
 import java.util.ArrayList;
 
-public class AlbumListActivity extends BaseActivity implements LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener, IProgressListner, View.OnClickListener {
+public class AlbumListActivity extends BaseActivity implements
+        LoaderManager.LoaderCallbacks<Cursor>, AdapterView.OnItemClickListener,
+        IProgressListner, View.OnClickListener {
 
     private static final int LOADER_ID_ALBUMS = 100;
     private static final int LOADER_ID_FRIENDS = 200;
     private static final int LOADER_ID_REQUESTS = 300;
 
-    private AlbumListAdapter adapter;
+    private AlbumListAdapter adapterAlbums;
+    private RequestsListAdapter adapterRequests;
     private ArrayList<Album> alAlbumList = new ArrayList<>();
     private ArrayList<FBFriend> friendlist = new ArrayList<>();
+    private ArrayList<Member> memberlist = new ArrayList<>();
     private FriendListAdapter friendListAdapter;
     private View rootView;
 
@@ -68,10 +73,15 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
         RecyclerView rvAlbums = (RecyclerView) findViewById(R.id.rv_albums);
         rvAlbums.setLayoutManager(new LinearLayoutManager(this));
         rvAlbums.addItemDecoration(new AlbumListDecorator(this));
+        adapterAlbums = new AlbumListAdapter(this, alAlbumList, this);
+        rvAlbums.setAdapter(adapterAlbums);
 
-        adapter = new AlbumListAdapter(this, alAlbumList, this);
 
-        rvAlbums.setAdapter(adapter);
+        RecyclerView rvRequests = (RecyclerView) findViewById(R.id.rv_requests);
+        rvRequests.setLayoutManager(new LinearLayoutManager(this));
+        rvRequests.addItemDecoration(new AlbumListDecorator(this));
+        adapterRequests = new RequestsListAdapter(this, memberlist, this);
+        rvRequests.setAdapter(adapterRequests);
 
         getLoaderManager().initLoader(LOADER_ID_ALBUMS, null, this);
         getLoaderManager().initLoader(LOADER_ID_FRIENDS, null, this);
@@ -128,6 +138,7 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
         for (FBFriend friend : friendlist) {
             if (friend.isSelected()) {
                 Member member = new Member(friend.getId(), album.getAlbumId());
+                member.setRequestAccepted(true);
                 Member.insertInDB(this, member);
                 Member.writeMember(member);
             }
@@ -138,7 +149,7 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         switch (id) {
             case LOADER_ID_ALBUMS:
-                return new CursorLoader(this, AlbumTable.CONTENT_URI, null, null, null, null);
+                return new CursorLoader(this, AlbumTable.CONTENT_URI, null, AlbumTable.COL_IS_REQ_ACCEPTED + " = ? ", new String[]{String.valueOf(1)}, null);
             case LOADER_ID_FRIENDS:
                 return new CursorLoader(this, FbFriendsTable.CONTENT_URI, null, null, null, null);
             case LOADER_ID_REQUESTS:
@@ -153,20 +164,23 @@ public class AlbumListActivity extends BaseActivity implements LoaderManager.Loa
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         switch (loader.getId()) {
             case LOADER_ID_ALBUMS:
-                adapter.refreshList(data);
-                if (data.getCount() == 0) {
-                    UiUtils.showEmptyView(rootView, R.string.empty_list, R.drawable.com_facebook_profile_picture_blank_portrait);
-                } else {
-                    UiUtils.hideEmptyView(rootView);
-                }
+                adapterAlbums.refreshList(data);
                 break;
             case LOADER_ID_FRIENDS:
                 friendlist = FBFriend.getAllFriends(data);
                 break;
             case LOADER_ID_REQUESTS:
+                adapterRequests.refreshList(data);
                 Log.d("requests", data.getCount() + "");
                 break;
+        }
 
+        if (loader.getId() == LOADER_ID_ALBUMS || loader.getId() == LOADER_ID_REQUESTS) {
+            if (data.getCount() == 0) {
+                UiUtils.showEmptyView(rootView, R.string.empty_list, R.drawable.com_facebook_profile_picture_blank_portrait);
+            } else {
+                UiUtils.hideEmptyView(rootView);
+            }
         }
 
      /*   Cursor cursor = getContentResolver().query(FbFriendsTable.CONTENT_URI,null,null,null,null);
