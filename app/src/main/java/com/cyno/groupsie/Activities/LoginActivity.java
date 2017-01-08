@@ -156,7 +156,7 @@ public class LoginActivity extends BaseActivity {
             User usr = new User(fbUid, user.getDisplayName(), user.getEmail(), url);
             User.writeUser(usr);
             FBUtils.GetFriendList(this , fbUid);
-            setCurrentUser(usr);
+            setCurrentUser(usr, this);
             startNextActivity();
         } else {
             // User is signed out

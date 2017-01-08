@@ -1,6 +1,7 @@
 package com.cyno.groupsie.activities;
 
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -39,6 +40,23 @@ public abstract class BaseActivity extends AppCompatActivity
     private FirebaseAuth mAuth;
     private ProgressDialog mProgressDialog;
 
+    public static User getCurrentUser( Context context){
+        User user = new User();
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        user.setUserId(pref.getString(KEY_USER_ID , ""));
+        user.setProfilePicUrl(pref.getString(KEY_USER_PROFILE_PIC, ""));
+        user.setUsername(pref.getString(KEY_USER_NAME, ""));
+        user.setEmail(pref.getString(KEY_USER_EMAIL , ""));
+        return user;
+    }
+
+    public static void setCurrentUser(User user , Context context){
+        PreferenceManager.getDefaultSharedPreferences(context).edit().
+                putString(KEY_USER_ID , user.getUserId()).
+                putString(KEY_USER_PROFILE_PIC , user.getProfilePicUrl()).
+                putString(KEY_USER_NAME , user.getUsername()).
+                putString(KEY_USER_EMAIL , user.getEmail()).commit();
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,7 +101,6 @@ public abstract class BaseActivity extends AppCompatActivity
         }
     }
 
-
     public void showProgressDialog() {
         if (mProgressDialog == null) {
             mProgressDialog = new ProgressDialog(this);
@@ -107,24 +124,6 @@ public abstract class BaseActivity extends AppCompatActivity
     protected void signOut() {
         mAuth.signOut();
         LoginManager.getInstance().logOut();
-    }
-
-    protected User getCurrentUser(){
-        User user = new User();
-        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(this);
-        user.setUserId(pref.getString(KEY_USER_ID , ""));
-        user.setProfilePicUrl(pref.getString(KEY_USER_PROFILE_PIC, ""));
-        user.setUsername(pref.getString(KEY_USER_NAME, ""));
-        user.setEmail(pref.getString(KEY_USER_EMAIL , ""));
-        return user;
-    }
-
-    protected void setCurrentUser(User user){
-        PreferenceManager.getDefaultSharedPreferences(this).edit().
-                putString(KEY_USER_ID , user.getUserId()).
-                putString(KEY_USER_PROFILE_PIC , user.getProfilePicUrl()).
-                putString(KEY_USER_NAME , user.getUsername()).
-                putString(KEY_USER_EMAIL , user.getEmail()).commit();
     }
 
     @Override

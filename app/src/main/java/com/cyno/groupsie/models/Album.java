@@ -7,6 +7,7 @@ import android.os.Parcel;
 import android.os.Parcelable;
 import android.util.Log;
 
+import com.cyno.groupsie.constatnsAndUtils.AlbumUtils;
 import com.cyno.groupsie.database.AlbumTable;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
@@ -73,6 +74,10 @@ public class Album implements Parcelable {
         album.setGrade(Integer.valueOf(dataSnapshot.child(C_ALBUM_GRADE).getValue().toString()));
         album.setAlbumId(dataSnapshot.getKey());
         album.setCoverPicUrl(dataSnapshot.child(C_COVER_PIC_URL).getValue().toString());
+
+        Album albumLocal = AlbumUtils.getLocalAlbum(context, album.getAlbumId());
+        if (albumLocal != null)
+            album.setRequestAccepted(albumLocal.isRequestAccepted());
         Album.insertOrUpdate(context, album);
     }
 

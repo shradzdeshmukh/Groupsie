@@ -87,7 +87,7 @@ public class AlbumListActivity extends BaseActivity implements
         getLoaderManager().initLoader(LOADER_ID_FRIENDS, null, this);
         getLoaderManager().initLoader(LOADER_ID_REQUESTS, null, this);
 
-        AlbumUtils.getAllAlbums(this, getCurrentUser(), this);
+        AlbumUtils.getAllAlbums(this, getCurrentUser(this), this);
 
     }
 
@@ -122,7 +122,7 @@ public class AlbumListActivity extends BaseActivity implements
                 .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        createNewAlbum(getCurrentUser(), edtCreateAlbum.getText().toString());
+                        createNewAlbum(getCurrentUser(AlbumListActivity.this), edtCreateAlbum.getText().toString());
                     }
                 }).setNegativeButton(R.string.cancel, null).show();
     }
@@ -133,6 +133,7 @@ public class AlbumListActivity extends BaseActivity implements
         album.setAlbumId(AlbumUtils.getAlbumId());
         album.setCreateDate(System.currentTimeMillis());
         album.setGrade(AlbumUtils.getGrade());
+        album.setRequestAccepted(true);
         Album.storeAndWriteAlbum(user.getUserId(), album, this);
 
         for (FBFriend friend : friendlist) {
@@ -175,18 +176,16 @@ public class AlbumListActivity extends BaseActivity implements
                 break;
         }
 
-        if (loader.getId() == LOADER_ID_ALBUMS || loader.getId() == LOADER_ID_REQUESTS) {
-            if (data.getCount() == 0) {
-                UiUtils.showEmptyView(rootView, R.string.empty_list, R.drawable.com_facebook_profile_picture_blank_portrait);
-            } else {
-                UiUtils.hideEmptyView(rootView);
-            }
+        if (adapterAlbums.getItemCount() == 0 && adapterRequests.getItemCount() == 0) {
+            UiUtils.showEmptyView(rootView, R.string.empty_list, R.drawable.com_facebook_profile_picture_blank_portrait);
+        } else {
+            UiUtils.hideEmptyView(rootView);
         }
+    }
 
      /*   Cursor cursor = getContentResolver().query(FbFriendsTable.CONTENT_URI,null,null,null,null);
         Log.d("cursor","cursor" +cursor.getCount());*/
 
-    }
 
     @Override
     public void onLoaderReset(Loader<Cursor> loader) {
