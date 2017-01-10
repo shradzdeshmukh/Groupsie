@@ -138,9 +138,9 @@ public class AlbumListActivity extends BaseActivity implements
 
         for (FBFriend friend : friendlist) {
             if (friend.isSelected()) {
-                Member member = new Member(friend.getId(), album.getAlbumId());
-                member.setRequestAccepted(true);
-                Member.insertInDB(this, member);
+                Member member = new Member(friend.getId(), album.getAlbumId(), false);
+//                member.setRequestAccepted(true);
+//                Member.insertInDB(this, member);
                 Member.writeMember(member);
             }
         }

@@ -108,7 +108,7 @@ public class Album implements Parcelable {
 
     public static void storeAndWriteAlbum(String userId, Album album, Context context) {
         writeAlbum(album);
-        Member.writeMember(new Member(userId, album.getAlbumId()));
+        Member.writeMember(new Member(userId, album.getAlbumId(), true));
         insertOrUpdate(context, album);
     }
 

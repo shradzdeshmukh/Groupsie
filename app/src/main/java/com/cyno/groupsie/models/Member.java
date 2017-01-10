@@ -32,9 +32,10 @@ public class Member {
 
     }
 
-    public Member(String userID, String albumID) {
+    public Member(String userID, String albumID, boolean isRequestAccepted) {
         this.userId = userID;
         this.albumId = albumID;
+        this.isRequestAccepted = isRequestAccepted;
     }
 
     public static void writeMember(Member member) {
@@ -49,7 +50,8 @@ public class Member {
         member.setUserId(members.child(C_USER_ID).getValue().toString());
         member.setAlbumId(members.child(C_ALBUM_ID).getValue().toString());
         member.setRequestAccepted((Boolean) members.child(C_IS_REQUEST_ACCEPTED).getValue());
-        if (!member.isRequestAccepted() && !member.getUserId().equals(LoginActivity.getCurrentUser(context).getUserId()))
+        Log.d("user id", "user id" + LoginActivity.getCurrentUser(context).getUserId());
+        if (!member.isRequestAccepted() && member.getUserId().equals(LoginActivity.getCurrentUser(context).getUserId()))
             Member.insertInDB(context, member);
         Log.d("Member data", "member = " + member.toString());
         return member;

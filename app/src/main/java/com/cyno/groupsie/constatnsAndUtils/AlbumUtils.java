@@ -95,7 +95,6 @@ public class AlbumUtils {
         ArrayList<Member> memberArrayList = new ArrayList<>();
         for (DataSnapshot members : dataSnapshot.getChildren()) {
             memberArrayList.add(Member.getMemberAndStoreLocally(members, context));
-
         }
         return memberArrayList;
     }
