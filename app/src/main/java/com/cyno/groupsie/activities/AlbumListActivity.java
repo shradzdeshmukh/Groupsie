@@ -9,6 +9,7 @@ import android.content.Loader;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
+import android.support.v7.view.ContextThemeWrapper;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -116,7 +117,7 @@ public class AlbumListActivity extends BaseActivity implements
 
         rvFriendList.setAdapter(friendListAdapter);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        AlertDialog.Builder builder = new AlertDialog.Builder(new ContextThemeWrapper(this, R.style.AlertDialogCustom));
         builder.setTitle(R.string.create_album_title)
                 .setView(rootView)
                 .setPositiveButton(R.string.done, new DialogInterface.OnClickListener() {
@@ -177,7 +178,7 @@ public class AlbumListActivity extends BaseActivity implements
         }
 
         if (adapterAlbums.getItemCount() == 0 && adapterRequests.getItemCount() == 0) {
-            UiUtils.showEmptyView(rootView, R.string.empty_list, R.drawable.com_facebook_profile_picture_blank_portrait);
+            UiUtils.showEmptyView(rootView, R.string.empty_album_list, R.drawable.ic_photo_album_blue_grey_300_48dp);
         } else {
             UiUtils.hideEmptyView(rootView);
         }

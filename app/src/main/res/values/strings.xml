@@ -32,4 +32,5 @@
     <string name="tag_requests">requests</string>
     <string name="title_reject_album">Reject album request?</string>
     <string name="msg_reject_album">Are you sure you want to reject this album request?</string>
+    <string name="empty_album_list">No albums present</string>
 </resources>

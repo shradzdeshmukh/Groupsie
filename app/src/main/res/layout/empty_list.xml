@@ -10,8 +10,8 @@
 
     <ImageView
         android:id="@+id/iv_empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_width="300dp"
+        android:layout_height="300dp"
         android:src="@drawable/com_facebook_profile_picture_blank_portrait" />
 
     <TextView

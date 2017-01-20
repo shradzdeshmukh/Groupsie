@@ -56,7 +56,7 @@ public class FriendListAdapter extends RecyclerView.Adapter<FriendListAdapter.Vi
         if (alFriendList.get(position).isSelected())
             holder.rootView.setBackgroundColor(ContextCompat.getColor(context, R.color.frnd_selected));
         else
-            holder.rootView.setBackgroundColor(ContextCompat.getColor(context, R.color.white));
+            holder.rootView.setBackgroundColor(ContextCompat.getColor(context, R.color.background));
 
 
     }
